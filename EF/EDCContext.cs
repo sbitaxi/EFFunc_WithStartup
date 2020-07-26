@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFFunc_WithStartup.EF
@@ -10,5 +11,6 @@ namespace EFFunc_WithStartup.EF
         {
 
         }
+
     }
 }
