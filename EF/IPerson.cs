@@ -25,13 +25,13 @@ namespace EFFunc_WithStartup.EF
             try
             {
                 return await _eDCContext.Database.ExecuteSqlRawAsync(
-                @"AddNewPerson @FirstName,
-                                @LastName, 
-                                @Email, 
-                                @Address, 
-                                @City, 
-                                @Province,
-                                @PostalCode",
+                @"EXEC AddNewPerson @FirstName = {0},
+                                @LastName = {1}, 
+                                @Email = {2}, 
+                                @Address = {3}, 
+                                @City = {4}, 
+                                @Province = {5},
+                                @PostalCode = {6}",
                         person.FirstName,
                         person.LastName,
                         person.Email,

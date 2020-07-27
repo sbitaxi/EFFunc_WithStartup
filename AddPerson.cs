@@ -14,19 +14,19 @@ namespace EFFunc_WithStartup
 {
     public class AddPerson
     {
-        private readonly EDCContext _eDCContext;
+        private readonly IPerson _iPerson;
 
-        public AddPerson(EDCContext eDCContext)
+        public AddPerson(IPerson iPerson)
         {
-            _eDCContext = eDCContext;
+            _iPerson = iPerson;
         }
 
         [FunctionName("AddPerson")]
         public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("Add Person Request");
 
             string name = req.Query["name"];
 
@@ -34,39 +34,11 @@ namespace EFFunc_WithStartup
             Person person = JsonConvert.DeserializeObject<Person>(requestBody);
             name = name ?? person?.FirstName;
 
-            await InsertPerson(person);
+            await _iPerson.InsertPerson(person);
 
             return name != null
                 ? (ActionResult)new OkObjectResult($"Hello, {name}")
                 : new BadRequestObjectResult("Please pass a name on the query string or in the request body");
-        }
-
-        public async Task<int> InsertPerson(Person person)
-        {
-            try
-            {
-                return await _eDCContext.Database.ExecuteSqlRawAsync(
-                @"EXEC AddNewPerson @FirstName = {0},
-                                @LastName = {1}, 
-                                @Email = {2}, 
-                                @Address = {3}, 
-                                @City = {4}, 
-                                @Province = {5},
-                                @PostalCode = {6}",
-                        person.FirstName,
-                        person.LastName,
-                        person.Email,
-                        person.Address,
-                        person.City,
-                        person.Province,
-                        person.PostalCode
-                        );
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
     }
 }
